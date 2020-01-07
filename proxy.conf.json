@@ -1,0 +1,10 @@
+{
+  "/broker": {
+    "target": "http://localhost:1026",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/broker": ""
+    }
+  }
+}

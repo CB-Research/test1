@@ -19,7 +19,7 @@ export class AppComponent implements AfterViewInit {
     // let heads = new HttpHeaders();
     // heads = heads.set('Access-Control-Allow-Origin', '*');
 
-    this.http.get('/api/v2/entities/urn:ngsi-ld:Sensor:001').subscribe(res => {
+    this.http.get('/broker/v2/entities/urn:ngsi-ld:Sensor:001').subscribe(res => {
       console.log(res);
     });
   }
