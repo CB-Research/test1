@@ -10,6 +10,21 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class AppComponent implements AfterViewInit {
   title = 'test1';
 
+  map;
+
+  customIcon = L.icon({
+    iconUrl: 'assets/marker-icon.png',
+    shadowUrl: 'assets/marker-shadow.png',
+
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
+
+
+
   constructor(private http: HttpClient) {
 
   }
@@ -19,14 +34,18 @@ export class AppComponent implements AfterViewInit {
     // let heads = new HttpHeaders();
     // heads = heads.set('Access-Control-Allow-Origin', '*');
 
-    this.http.get('/broker/v2/entities/urn:ngsi-ld:Sensor:001').subscribe(res => {
-      console.log(res);
+    this.http.get('/broker/v2/entities?type=Sensor').subscribe((sensor: Sensor[]) => {
+      sensor.forEach(s => {
+        const coordinates: number[] = s.location.value.coordinates;
+        const marker = L.marker(coordinates, { icon: this.customIcon }).addTo(this.map);
+        marker.bindPopup('Cerca Ca Ángel');
+      });
     });
   }
 
   ngAfterViewInit(): void {
     console.log('holi');
-    const map = L.map('map', {
+    this.map = L.map('map', {
       center: [39.8282, -98.5795],
       zoom: 3
     });
@@ -36,15 +55,11 @@ export class AppComponent implements AfterViewInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    tiles.addTo(map);
+    tiles.addTo(this.map);
 
-    map.setView([37.9922399, -1.1306544], 13);
+    this.map.setView([37.9922399, -1.1306544], 12);
 
-    const marker1 = L.marker([38.019988, -1.097616]).addTo(map);
 
-    const marker2 = L.marker([37.9922399, -1.1306544]).addTo(map);
-
-    marker1.bindPopup("Cerca Ca'ngel");
 
     this.getData();
   }
