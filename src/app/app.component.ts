@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +23,7 @@ export class AppComponent implements AfterViewInit {
     shadowSize: [41, 41]
   });
 
-
+  markers;
 
   constructor(private http: HttpClient) {
 
@@ -31,14 +31,23 @@ export class AppComponent implements AfterViewInit {
 
   getData() {
 
-    // let heads = new HttpHeaders();
-    // heads = heads.set('Access-Control-Allow-Origin', '*');
+    let heads = new HttpHeaders();
+    heads = heads.set('fiware-service', 'environment');
+    heads = heads.set('fiware-servicepath', '/Madrid');
+    let pams = new HttpParams();
+    pams = pams.set('type', 'AirQualityObserved');
+    pams = pams.set('options', 'keyValues');
 
-    this.http.get('/broker/v2/entities?type=Sensor').subscribe((sensor: Sensor[]) => {
+    this.http.get('/broker/v2/entities', { headers: heads, params: pams }).subscribe((sensor: Sensor[]) => {
+      this.markers = L.layerGroup();
       sensor.forEach(s => {
-        const coordinates: number[] = s.location.value.coordinates;
-        const marker = L.marker(coordinates, { icon: this.customIcon }).addTo(this.map);
-        marker.bindPopup('Cerca Ca Ángel');
+        const coordinates: number[] = s.location.coordinates;
+        const marker = L.marker(coordinates.reverse(), { icon: this.customIcon }).addTo(this.map);
+        this.markers.addLayer(marker).addTo(this.map);
+        marker.bindPopup('Latitude: ' + s.location.coordinates[1] +
+          '<br />Longitude: ' + s.location.coordinates[0] +
+          '<br />Date: ' + s.dateObserved.toLocaleString()
+        );
       });
     });
   }
@@ -46,8 +55,8 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     console.log('holi');
     this.map = L.map('map', {
-      center: [39.8282, -98.5795],
-      zoom: 3
+      center: [40.4167, -3.70325],
+      zoom: 11
     });
 
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -57,11 +66,22 @@ export class AppComponent implements AfterViewInit {
 
     tiles.addTo(this.map);
 
-    this.map.setView([37.9922399, -1.1306544], 12);
+    this.map.on('zoom', this.onMapReset.bind(this));
 
-
+    this.map.on('click', this.onMapClick);
 
     this.getData();
+  }
+
+  onMapClick() {
+    console.log('click');
+  }
+
+  onMapReset() {
+    if (this.map.getZoom() < 6) {
+      console.log(this.markers);
+      // this.markers.remove();
+    }
   }
 
 }
