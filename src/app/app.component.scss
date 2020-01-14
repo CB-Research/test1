@@ -11,11 +11,13 @@
 
 .map-frame {
   border: 2px solid black;
-  height: 100%;
+  min-height: 100%;
 }
 
 #map {
-  height: 100%;
+  height: 500px;
+  margin: 10px;
+  position: relative;
 }
 
 // .fill {
