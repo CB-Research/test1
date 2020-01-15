@@ -34,33 +34,37 @@ export class AppComponent implements AfterViewInit {
     getData() {
 
         let heads = new HttpHeaders();
-        heads = heads.set('fiware-service', 'environment');
-        heads = heads.set('fiware-servicepath', '/Madrid');
+        heads = heads.set('fiware-service', 'openiot');
+        heads = heads.set('fiware-servicepath', '/EEA_POLLUTION');
+        // heads = heads.set('fiware-service', 'environment');
+        // heads = heads.set('fiware-servicepath', '/Madrid');
         let pams = new HttpParams();
-        pams = pams.set('type', 'AirQualityObserved');
+        pams = pams.set('type', 'EEA_POLLUTION');
+        // pams = pams.set('type', 'AirQualityObserved');
         pams = pams.set('options', 'keyValues');
+        pams = pams.set('limit', '500');
 
         this.http.get('/broker/v2/entities', { headers: heads, params: pams }).subscribe((sensor: Sensor[]) => {
+            console.log('SENSOOOOOR:' + sensor.length);
             this.markers = L.layerGroup();
             sensor.forEach(s => {
-                const coordinates: number[] = s.location.coordinates;
-                const marker = L.marker(coordinates.reverse(), {
+                const coordinates: number[] = [s.latitude, s.longitude];
+                const marker = L.marker(coordinates, {
                     icon: this.customIcon,
                     clickable: true
                 }).on('click', (data) => {
                     console.log(coordinates);
-                    this.realTimeData = 'Latitude: ' + s.location.coordinates[1] +
-                        '\nLongitude: ' + s.location.coordinates[0] +
-                        '\nDate: ' + s.dateObserved.toLocaleString() +
+                    this.realTimeData = 'Latitude: ' + s.latitude +
+                        '\nLongitude: ' + s.longitude +
+                        '\nDate: ' + s.TimeInstant.toLocaleString() +
                         '\nNO: ' + s.NO +
                         '\nNO2: ' + s.NO2 +
-                        '\nNOx: ' + s.NOx +
                         '\nO3: ' + s.O3;
                 }).addTo(this.map);
                 this.markers.addLayer(marker).addTo(this.map);
-                marker.bindPopup('Latitude: ' + s.location.coordinates[1] +
-                    '<br />Longitude: ' + s.location.coordinates[0] +
-                    '<br />Date: ' + s.dateObserved.toLocaleString()
+                marker.bindPopup('Latitude: ' + s.latitude +
+                    '<br />Longitude: ' + s.longitude +
+                    '<br />Date: ' + s.TimeInstant.toLocaleString()
                 );
             });
         });
