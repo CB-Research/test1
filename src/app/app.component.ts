@@ -4,6 +4,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 declare let L;
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class AppComponent implements AfterViewInit {
 
   map;
 
-  realTimeData: string = 'This is the real-time data container';
+  realTimeData: string[] = ['This is the real-time data container'];
 
   customIcon = L.icon({
     iconUrl: 'assets/marker-icon.png',
@@ -56,17 +57,17 @@ export class AppComponent implements AfterViewInit {
           clickable: true
         }).on('click', (data) => {
           console.log(coordinates);
-          this.realTimeData = 'Latitude: ' + s.latitude +
-            '\nLongitude: ' + s.longitude +
-            '\nDate: ' + s.TimeInstant.toLocaleString() +
-            '\nNO: ' + s.NO +
-            '\nNO2: ' + s.NO2 +
-            '\nO3: ' + s.O3;
+          this.realTimeData = ['Latitude: ' + s.latitude,
+          '\nLongitude: ' + s.longitude,
+          '\nDate: ' + moment(s.TimeInstant).format('MMMM Do YYYY, h:mm:ss a'),
+          '\nNO: ' + s.NO,
+          '\nNO2: ' + s.NO2,
+          '\nO3: ' + s.O3];
         });
         this.markers.addLayer(marker);
         marker.bindPopup('Latitude: ' + s.latitude +
           '<br />Longitude: ' + s.longitude +
-          '<br />Date: ' + s.TimeInstant.toLocaleString()
+          '<br />Date: ' + moment(s.TimeInstant).format('MMMM Do YYYY, h:mm:ss a')
         );
       });
       this.map.addLayer(this.markers);
