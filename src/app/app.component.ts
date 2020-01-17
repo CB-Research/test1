@@ -164,7 +164,7 @@ export class AppComponent implements AfterViewInit {
         scales: {
           yAxes: [{
             ticks: {
-              beginAtZero: true
+              beginAtZero: false
             }
           }]
         }
