@@ -6,7 +6,7 @@ declare let L;
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js';
 import * as moment from 'moment';
 import { Sensor } from './sensor.model.js';
-import { Historic } from './historic.model.js';
+import { Historic, Sample } from './historic.model.js';
 import { Chart } from 'chart.js';
 
 @Component({
@@ -108,7 +108,7 @@ export class AppComponent implements AfterViewInit {
 
     this.getData();
 
-    this.showChart();
+    // this.showChart();
   }
 
   getHistoric(data: Sensor) {
@@ -120,6 +120,10 @@ export class AppComponent implements AfterViewInit {
       + data.id + '/attributes/NO2?lastN=10', { headers: heads }).subscribe((res: Historic) => {
         console.log(res);
         console.log(res.contextResponses[0].contextElement.attributes[0].values);
+        let historic = res.contextResponses[0].contextElement.attributes[0].values;
+        let labels = historic.map((d: Sample) => moment(d.recvTime).format('h:mm:ss'));
+        let values = historic.map((d: Sample) => d.attrValue);
+        this.showChart(labels, values, [20, 30]);
       });
   }
 
@@ -134,37 +138,27 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  showChart() {
-    // console.log(document);
-    // this.canvas = document.getElementById('myChart');
-    // console.log(this);
-    // console.log(this.canvas);
-    // this.ctx = this.canvas.getContext('2d');
+  showChart(ls, vs, vsNo) {
+
     this.chart = new Chart(this.chartRef.nativeElement, {
-      type: 'bar',
+      type: 'line',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: ls,
         datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
-          ],
-          borderWidth: 1
-        }]
+          label: 'NO2',
+          data: vs,
+          backgroundColor: 'lightblue',
+          borderColor: 'lightblue',
+          fill: false
+        },
+        {
+          label: 'NO',
+          data: vsNo,
+          backgroundColor: 'lightgreen',
+          borderColor: 'lightgreen',
+          fill: false
+        }
+        ]
       },
       options: {
         scales: {

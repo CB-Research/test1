@@ -5,12 +5,14 @@ export interface Historic {
     contextElement: {
       attributes: {
         name: string,
-        values: {
-          recvTime: Moment,
-          attrType: string,
-          attrValue: number
-        }[]
+        values: Sample[]
       }[]
     }
   }[];
+}
+
+export interface Sample {
+  recvTime: Moment;
+  attrType: string;
+  attrValue: number;
 }
