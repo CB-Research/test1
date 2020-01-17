@@ -17,7 +17,11 @@ import { Chart } from 'chart.js';
 export class AppComponent implements AfterViewInit {
 
 
-  @ViewChild('canvas') canvas: ElementRef;
+  // @ViewChild('canvas', { static: false }) canvas: ElementRef;
+  @ViewChild('myChart', { static: false }) private chartRef;
+
+  canvas: any;
+  ctx: any;
 
   title = 'test1';
 
@@ -131,7 +135,12 @@ export class AppComponent implements AfterViewInit {
   }
 
   showChart() {
-    this.chart = new Chart('canvas', {
+    // console.log(document);
+    // this.canvas = document.getElementById('myChart');
+    // console.log(this);
+    // console.log(this.canvas);
+    // this.ctx = this.canvas.getContext('2d');
+    this.chart = new Chart(this.chartRef.nativeElement, {
       type: 'bar',
       data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
