@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 
 export interface Sensor {
-  id: number;
+  id: string;
   type: string;
   //   location: {
   //     coordinates: number[];
@@ -14,4 +14,10 @@ export interface Sensor {
   NO2: string;
   //   NOx: string;
   O3: string;
+  SO2: string;
+  CO: string;
+  C6H6: string;
+  PM10: string;
+  AQI: string;
+  'PM2.5': string;
 }

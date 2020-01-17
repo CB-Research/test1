@@ -7,6 +7,9 @@
     <div *ngFor="let item of realTimeData">
       {{item}}
     </div>
+    <div *ngIf="chart">
+      <canvas #canvas>{{ chart }}</canvas>
+    </div>
   </div>
   <!-- </div> -->
 </div>
