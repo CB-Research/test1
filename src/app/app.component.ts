@@ -123,7 +123,7 @@ export class AppComponent implements AfterViewInit {
         let historic = res.contextResponses[0].contextElement.attributes[0].values;
         let labels = historic.map((d: Sample) => moment(d.recvTime).format('h:mm:ss'));
         let values = historic.map((d: Sample) => d.attrValue);
-        this.showChart(labels, values, [20, 30]);
+        this.showChart(labels, values, [20, 30, 11]);
       });
   }
 
